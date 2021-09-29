@@ -1,5 +1,6 @@
-from flask import render_template, Blueprint, request, redirect, url_for, flash, session
-from pillbox_support import validator, read_vcode_ctl, write_vcode_ctl, VcodeCtl, PillboxException
+from flask import render_template, Blueprint, request, redirect, url_for, flash
+from pillbox.pillbox_support import read_vcode_ctl, write_vcode_ctl, VcodeCtl, PillboxException
+from pillbox.pillbox_support import validator
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 

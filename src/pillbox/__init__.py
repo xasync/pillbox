@@ -1,6 +1,6 @@
 from flask import Flask
 import os
-import pillbox_support
+from pillbox import pillbox_support
 
 
 def create_app():
@@ -10,15 +10,10 @@ def create_app():
 
     app.before_request_funcs.setdefault(None, []).append(pillbox_support.login_check_interceptor)
 
-    import auth
-    import index
+    from pillbox.views import auth
+    from pillbox.views import index
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(index.bp)
 
     return app
-
-
-if __name__ == '__main__':
-    app = create_app()
-    app.run(port=5200, debug=True)
