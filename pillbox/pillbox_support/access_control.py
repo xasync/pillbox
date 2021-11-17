@@ -1,7 +1,7 @@
 # coding=utf-8
 from flask import request, session, redirect, url_for
 import json
-import xtime
+from . import xtime
 
 
 def login_check_interceptor():
@@ -10,7 +10,7 @@ def login_check_interceptor():
         login_user = session.get('login_user')
         if login_user is None:
             return redirect(url_for('auth.index'))
-        print login_user
+        print(login_user)
         # check if expired
         user = json.loads(login_user)
         now_millis = xtime.now_millis()

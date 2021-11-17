@@ -1,6 +1,8 @@
 from flask import Flask
 import os
-from pillbox import pillbox_support
+import sys
+from . import pillbox_support
+from . import views
 
 
 def create_app():
@@ -10,10 +12,7 @@ def create_app():
 
     app.before_request_funcs.setdefault(None, []).append(pillbox_support.login_check_interceptor)
 
-    from pillbox.views import auth
-    from pillbox.views import index
-
-    app.register_blueprint(auth.bp)
-    app.register_blueprint(index.bp)
+    app.register_blueprint(views.auth.bp)
+    app.register_blueprint(views.index.bp)
 
     return app

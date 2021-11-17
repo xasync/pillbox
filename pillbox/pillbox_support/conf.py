@@ -1,11 +1,10 @@
-import os
-import sys
+from __future__ import print_function
 
-import pyhocon
 import configparser
+import os
 
-APP_DATA_DIR = os.path.join(os.path.expanduser('~'), '.pillbox')
-CONF_FILE = os.path.join(APP_DATA_DIR, 'pillbox.conf')
+from . import env
+
 CONF_DEFAULT_DATA = '''
 [app]
 # set the administer email for signing in system.
@@ -15,15 +14,13 @@ CONF_DEFAULT_DATA = '''
 
 class Configure:
     def __init__(self):
-        self.file_path = CONF_FILE
+        self.file_path = env.get_app_conf_path(env.app_conf_file)
         self.sp = '.'
-        if not os.path.exists(APP_DATA_DIR):
-            os.makedirs(APP_DATA_DIR)
-        if not os.path.exists(CONF_FILE):
-            with open(CONF_FILE, 'w') as fd:
+        if not os.path.exists(self.file_path):
+            with open(self.file_path, 'w') as fd:
                 fd.write(CONF_DEFAULT_DATA)
         cp = configparser.ConfigParser()
-        cp.read(CONF_FILE, encoding='utf-8')
+        cp.read(self.file_path, encoding='utf-8')
         self._cp = cp
 
     def app(self):
@@ -41,7 +38,7 @@ class Configure:
                 line = fd.readline()
                 if not line:
                     break
-                print line
+                print(line)
 
     def get(self, name, default_value=None):
         n = str(name).strip()
@@ -62,7 +59,7 @@ class Configure:
     def set(self, name, data):
         n = str(name).strip()
         if len(n) <= 0:
-            print 'the name is empty.'
+            print('the name is empty.')
             return False
         pos = n.rfind('.')
         if pos > 0:
@@ -74,4 +71,21 @@ class Configure:
         if not self._cp.has_section(section):
             self._cp.add_section(section)
         self._cp.set(section, option, data)
+        self._cp.write(open(self.file_path, 'w+'))
+
+    def erase(self, name):
+        n = str(name).strip()
+        if len(n) <= 0:
+            print('the name is empty.')
+            return False
+        pos = n.rfind('.')
+        if pos > 0:
+            section = n[0:pos]
+            option = n[pos + len(self.sp):] if pos + len(self.sp) < len(n) else ''
+        else:
+            section = 'app'
+            option = n
+        if not self._cp.has_section(section):
+            self._cp.add_section(section)
+        self._cp.remove_option(section, option)
         self._cp.write(open(self.file_path, 'w+'))

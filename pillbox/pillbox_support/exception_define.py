@@ -1,6 +1,4 @@
-from access_control import *
-from flask import jsonify
-import validator
+import json
 
 
 class PillboxException(Exception):
@@ -11,5 +9,5 @@ class PillboxException(Exception):
         self.payload = payload
 
     def __str__(self):
-        payload_str = 'Payload:' + jsonify(self.payload) if self.payload else ''
+        payload_str = 'Payload:' + json.dumps(self.payload) if self.payload else ''
         return '[${code}] ${message} ${payload}'.format(code=self.code, message=self.message, payload=payload_str)
